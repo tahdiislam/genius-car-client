@@ -1,4 +1,5 @@
 .sliderImg::after{
+    border-radius: 12px;
     content: "";
     position: absolute;
     left: 0;
