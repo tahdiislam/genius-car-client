@@ -6,9 +6,10 @@ const Header = () => {
     const menuItems = <>
         <li><Link className='font-semibold' to="/"><button className='btn btn-link text-error'>Home</button></Link></li>
         <li><Link className='font-semibold' to="/login"><button className='btn btn-link text-error'>Login</button></Link></li>
+        <li><Link className='font-semibold' to="/signup"><button className='btn btn-link text-error'>Sign Up</button></Link></li>
     </>
     return (
-        <div className="navbar h-20 pt-12 bg-base-100">
+        <div className="navbar h-20 py-12 bg-base-100">
             <div className="navbar-start">
                 <div className="dropdown">
                     <label tabIndex={0} className="btn btn-ghost lg:hidden">
