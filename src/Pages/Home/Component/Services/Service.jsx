@@ -16,8 +16,11 @@ const Service = () => {
                 <h1 className='mb-5 text-5xl font-bold'>Our Service Area</h1>
                 <p className='w-1/2 mx-auto mb-12'>the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. </p>
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+            <div className='mb-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                 {services.map(service => <ServiceItem key={service._id} service={service} />)}
+            </div>
+            <div className='flex justify-center'>
+                <button className='btn btn-error btn-outline'>More Services</button>
             </div>
         </div>
     );
