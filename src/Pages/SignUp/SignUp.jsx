@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import loginImg from "../../assets/images/login/login.svg"
+import { UserContext } from '../../Context/AuthProvider';
 
 const SignUp = () => {
     const [userDetails, setUserDetails] = useState({})
+    const { createUserEmailPass } = useContext(UserContext)
     // form submit handler
     const handleFormSubmit = e => {
         e.preventDefault();
-        const form = e.target;
         // console.log(userDetails);
+        const {name, email, password} = userDetails;
+        // create user with email and pass
+        createUserEmailPass(email, password)
+        .then(result => {
+            toast.success("Successfully created account!!")
+            console.log(result);
+        })
+        .catch(error => {
+            toast.error(error.message)
+            console.log(error.message);
+        })
     }
 
     // get user details handler
