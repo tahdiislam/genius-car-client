@@ -1,12 +1,15 @@
 import React, { useContext, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import loginImg from "../../assets/images/login/login.svg"
 import { UserContext } from '../../Context/AuthProvider';
 
 const Login = () => {
     const [userDetails, setUserDetails] = useState({})
     const { logInUser } = useContext(UserContext)
+    const navigate = useNavigate()
+    const location = useLocation()
+    const from = location.state?.from?.pathname || "/"
     // form submit handler
     const handleFormSubmit = e => {
         e.preventDefault();
@@ -17,6 +20,7 @@ const Login = () => {
         logInUser(email, password)
         .then(result => {
             toast.success("Sign in successfully.")
+            navigate(from, {replace: true})
         })
         .catch(err => toast.error(err.message))
     }
