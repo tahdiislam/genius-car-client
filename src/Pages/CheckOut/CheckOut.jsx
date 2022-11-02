@@ -1,13 +1,14 @@
 import React, { useContext } from 'react';
+import toast from 'react-hot-toast';
 import { useLoaderData } from 'react-router-dom';
 import checkOutImg from '../../assets/images/checkout/checkout.png';
 import { UserContext } from '../../Context/AuthProvider';
 
 const CheckOut = () => {
     const service = useLoaderData()
-    const {user} = useContext(UserContext)
+    const { user } = useContext(UserContext)
     // console.log(service);
-    const {title, _id, price,} = service
+    const { title, _id, price, } = service
     // form submit handler
     const handleFormSubmit = e => {
         e.preventDefault()
@@ -27,7 +28,30 @@ const CheckOut = () => {
             phone,
             message,
         }
-        console.log(order);
+        // console.log(order);
+        if (phone.length < 10) {
+            toast.error("Please provide a valid number.")
+            return;
+        }
+
+        // post order 
+        fetch("http://localhost:5000/orders", {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+            },
+            body: JSON.stringify(order)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.acknowledged){
+                    form.reset()
+                    toast.success("Order added successfully.")
+                }
+            })
+            .catch(err => {
+                toast.error(err.message)
+            })
     }
     return (
         <div>
