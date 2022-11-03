@@ -8,7 +8,7 @@ function App() {
   return (
     <div className="max-w-7xl mx-auto">
       <RouterProvider router={router}/>
-      <Toaster position="bottom-left"
+      <Toaster position="top-left"
         reverseOrder={false} />
     </div>
   )

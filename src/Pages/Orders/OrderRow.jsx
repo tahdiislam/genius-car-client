@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
-const OrderRow = ({ order, setRefresh }) => {
+const OrderRow = ({ order, handleDeleteOrder, handleUpdateOrderStatus }) => {
     const [serviceData, setServiceData] = useState({})
-    const { service, serviceName, price, customer, email} = order;
+    const {_id, service, serviceName, price, customer, email , status} = order;
     // load service data 
     useEffect( () => {
         fetch(`http://localhost:5000/services/${service}`)
@@ -11,22 +11,6 @@ const OrderRow = ({ order, setRefresh }) => {
         .then(data => setServiceData(data))
     },[service])
 
-    // order delete handler
-    const handleDeleteOrder = order => {
-        const proceed = window.confirm(`Are you sure you want to delete ${order.serviceName}`)
-        if(proceed){
-            fetch(`http://localhost:5000/orders/${order._id}`, {
-                method: "DELETE"
-            })
-            .then(res => res.json())
-            .then(data => {
-                toast.success("Product deleted successfully.")
-                setRefresh(true)
-                setRefresh(false)
-            })
-            .catch(err => toast.error(err.message))
-        }
-    }
     return (
         <tr>
             <th>
@@ -54,7 +38,7 @@ const OrderRow = ({ order, setRefresh }) => {
             </td>
             <td><p>22-10-2022</p></td>
             <th>
-                <button className="btn btn-ghost btn-xs">details</button>
+                <button onClick={() => handleUpdateOrderStatus(_id)}  className="btn btn-ghost btn-xs">{status ? status : "pending"}</button>
             </th>
         </tr>
     );

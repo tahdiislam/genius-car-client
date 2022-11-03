@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import manageOrdersImg from "../../assets/images/manageOrder/manage-order-img.png"
 import { UserContext } from '../../Context/AuthProvider';
 import OrderRow from './OrderRow';
 
 const Orders = () => {
     const [orders, setOrders] = useState([])
-    const [refresh, setRefresh] = useState(false)
     const { user } = useContext(UserContext)
     // console.log(user);
     // load data from server
@@ -13,7 +13,52 @@ const Orders = () => {
         fetch(`http://localhost:5000/orders?email=${user?.email}`)
         .then(res => res.json())
         .then(data => setOrders(data))
-    }, [user?.email, refresh])
+    }, [user?.email])
+
+    // order delete handler
+    const handleDeleteOrder = selectedOrder => {
+        const proceed = window.confirm(`Are you sure you want to delete ${selectedOrder.serviceName}`)
+        if (proceed) {
+            fetch(`http://localhost:5000/orders/${selectedOrder._id}`, {
+                method: "DELETE"
+            })
+                .then(res => res.json())
+                .then(data => {
+                    toast.success("Product deleted successfully.")
+                    const remaining = orders.filter(order => order._id !== selectedOrder._id)
+                    setOrders(remaining)
+                })
+                .catch(err => toast.error(err.message))
+        }
+    }
+
+    // update orders status 
+    const handleUpdateOrderStatus = id => {
+        // console.log("order update btn clicked in id", id );
+        // update order status in database
+        fetch(`http://localhost:5000/orders/${id}`,{
+            method: "PATCH",
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify({status: "Approved"})
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.modifiedCount){
+                toast.success("Status update successfully.")
+                const remainingOrders = orders.filter(o => o._id !== id)
+                const approvedOrder = orders.find(o => o._id === id)
+                approvedOrder.status = "Approved"
+                const newOrders = [approvedOrder, ...remainingOrders]
+                setOrders(newOrders)
+            } else{
+                toast.error("Ops this order is already approved")
+            }
+        })
+        .catch(err => toast.error(err.message))
+    }
+
     return (
         <div>
             <div className='relative'>
@@ -33,7 +78,7 @@ const Orders = () => {
                     <table className="table w-full">
                         <tbody>
                             {
-                                orders.map(order => <OrderRow key={order._id} order={order} setRefresh={setRefresh}/>)
+                                orders.map(order => <OrderRow key={order._id} order={order} handleDeleteOrder={handleDeleteOrder} handleUpdateOrderStatus={handleUpdateOrderStatus} />)
                             }
                         </tbody>
                     </table>
