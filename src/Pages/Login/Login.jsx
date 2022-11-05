@@ -15,22 +15,38 @@ const Login = () => {
         e.preventDefault();
         const form = e.target;
         // console.log(userDetails);
-        const {email, password} = userDetails;
+        const { email, password } = userDetails;
         // log in method
         logInUser(email, password)
-        .then(result => {
-            toast.success("Sign in successfully.")
-            navigate(from, {replace: true})
-        })
-        .catch(err => toast.error(err.message))
+            .then(result => {
+                const user = result.user;
+                const currentUser = {
+                    email: user.email
+                }
+                // set user to server to get access token
+                fetch("http://localhost:5000/jwt", {
+                    method: "POST", 
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                    body: JSON.stringify(currentUser)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    localStorage.setItem("genius-token", data.token)
+                    toast.success("Sign in successfully.")
+                    navigate(from, { replace: true })
+                })
+            })
+            .catch(err => toast.error(err.message))
     }
-    
+
     // get user details handler
     const handleGetUserDetails = e => {
         const field = e.target.name;
         const fieldValue = e.target.value;
         // console.log(field, fieldValue);
-        const newUser = {...userDetails}
+        const newUser = { ...userDetails }
         newUser[field] = fieldValue;
         setUserDetails(newUser)
     }
@@ -47,13 +63,13 @@ const Login = () => {
                             <label className="label">
                                 <span className="label-text">Email</span>
                             </label>
-                            <input onChange={handleGetUserDetails} name='email' type="email" placeholder="email" className="input input-bordered" required/>
+                            <input onChange={handleGetUserDetails} name='email' type="email" placeholder="email" className="input input-bordered" required />
                         </div>
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text">Password</span>
                             </label>
-                            <input onChange={handleGetUserDetails} name='password' type="password" placeholder="password" className="input input-bordered" required/>
+                            <input onChange={handleGetUserDetails} name='password' type="password" placeholder="password" className="input input-bordered" required />
                             <label className="label">
                                 <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
                             </label>

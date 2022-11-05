@@ -6,13 +6,24 @@ import OrderRow from './OrderRow';
 
 const Orders = () => {
     const [orders, setOrders] = useState([])
-    const { user } = useContext(UserContext)
+    const { user, logOutUser } = useContext(UserContext)
     // console.log(user);
     // load data from server
     useEffect(() => {
-        fetch(`http://localhost:5000/orders?email=${user?.email}`)
-        .then(res => res.json())
+        fetch(`http://localhost:5000/orders?email=${user?.email}`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem("genius-token")}`
+            }
+        })
+        .then(res =>{
+            if(res.status === 401 || res.status === 403)
+            {
+                return logOutUser()
+            }
+            return res.json()
+        })
         .then(data => setOrders(data))
+        .catch(err => console.dir(err))
     }, [user?.email])
 
     // order delete handler

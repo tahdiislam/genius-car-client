@@ -23,7 +23,10 @@ const AuthProvider = ({children}) => {
     }
 
     // log out user 
-    const logOutUser = () => signOut(auth)
+    const logOutUser = () => {
+        localStorage.removeItem("genius-token")
+        return signOut(auth);
+    }
 
     // load current user 
     useEffect(() => {
